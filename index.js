@@ -21,9 +21,7 @@ for(var counter=0; counter<=times; counter++){
     for(var i=0;i<4;i++){
       console.log(diff.change.details[i]);
     }
-
     return;
   }
-
   cookieJar.setCookie('a=b; Domain=example.com', 'http://example.com/index.html', {}, function () {});
 }
