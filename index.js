@@ -2,18 +2,19 @@ var tough = require('tough-cookie');
 var crypto = require('crypto');
 
 
-var cookieJar = new tough.CookieJar();
-var memwatch = require('memwatch');
-var hd = new memwatch.HeapDiff();
-var times = 1000000;
 
-
-
-var start = new Date();
 
 crypto.randomBytes(1000, function (e, cookieContents) {
   var cookie = 'sid='+cookieContents.toString('hex')+'; Domain=example.com';
-  console.log('Running ' + times + ' with a cookie of length: ', cookie.length);
+  var cookieJar = new tough.CookieJar();
+  cookieJar.setCookie(cookie, 'http://example.com/index.html', {}, function () {});
+
+  var memwatch = require('memwatch');
+  var hd = new memwatch.HeapDiff();
+  var times = 1000000;
+  var start = new Date();
+
+  console.log('Running ' + times + ' times with a cookie of length: ' + cookie.length);
   for(var counter=0; counter<=times; counter++){
     if(counter % (times/1000) === 0) {
       console.log('Testing: ' + (counter/times * 100).toFixed(1) + '% (' + counter + ')');
