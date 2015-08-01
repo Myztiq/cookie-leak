@@ -2,7 +2,7 @@ This is a test for tough-cookie memory leaks.
 
 There is a super super super tiny leak going on right now, I have no idea what might be causing it.
 
-1. Checkout the repo
+1. Checkout the repo and switch to this branch
 2. `npm install`
 3. `npm start`
 4. It will launch a window, click play to run the code.
