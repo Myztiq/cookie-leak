@@ -2,34 +2,50 @@ var tough = require('tough-cookie');
 var crypto = require('crypto');
 
 
+var times = 1000000;
+var cookieLength = 100;
+var testFinished = false;
 
 
-crypto.randomBytes(1000, function (e, cookieContents) {
-  var cookie = 'sid='+cookieContents.toString('hex')+'; Domain=example.com';
-  var cookieJar = new tough.CookieJar();
+var readline = require('readline');
+
+var rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
+
+var cookie;
+var cookieJar = new tough.CookieJar();
+crypto.randomBytes(cookieLength, function (e, cookieContents) {
+  cookie = 'sid='+cookieContents.toString('hex')+'; Domain=example.com';
   cookieJar.setCookie(cookie, 'http://example.com/index.html', {}, function () {});
+});
 
-  var memwatch = require('memwatch');
-  var hd = new memwatch.HeapDiff();
-  var times = 1000000;
-  var start = new Date();
+function runTest(){
+  console.log('Running ',  times, ' times with a cookie of length: ', cookie.length);
 
-  console.log('Running ' + times + ' times with a cookie of length: ' + cookie.length);
-  for(var counter=0; counter<=times; counter++){
+  for(var counter=0; counter < times; counter++){
     if(counter % (times/1000) === 0) {
-      console.log('Testing: ' + (counter/times * 100).toFixed(1) + '% (' + counter + ')');
+      process.stdout.cursorTo(0);
+      process.stdout.write((counter/times*100).toFixed(1) + "%");
+      process.stdout.clearLine(1);
     }
-    if (counter === times) {
-      console.log('Finished running ' + counter + ' times. Phew. That took ' + ((new Date()-start)/1000/60).toFixed(2) + ' Minutes');
-      var diff = hd.end();
-      console.log(diff);
-      console.log('Top offenders in order:');
-      for(var i=0;i<4;i++){
-        console.log(diff.change.details[i]);
-      }
-      return;
-    }
-
     cookieJar.setCookie(cookie, 'http://example.com/index.html', {}, function () {});
   }
+  console.log('');
+  console.log('Finished!');
+
+  rl.question("Hit enter to finish", function() {
+    testFinished = true;
+
+    rl.close();
+  });
+}
+
+rl.question("Hit enter to run tests.", function() {
+  runTest();
 });
+
+(function wait () {
+  if (!testFinished) setTimeout(wait, 1000);
+})();
