@@ -4,9 +4,6 @@ var crypto = require('crypto');
 
 var times = 1000000;
 var cookieLength = 100;
-var testFinished = false;
-
-
 var readline = require('readline');
 
 var rl = readline.createInterface({
@@ -36,16 +33,11 @@ function runTest(){
   console.log('Finished!');
 
   rl.question("Hit enter to finish", function() {
-    testFinished = true;
-
     rl.close();
+    process.exit();
   });
 }
 
 rl.question("Hit enter to run tests.", function() {
   runTest();
 });
-
-(function wait () {
-  if (!testFinished) setTimeout(wait, 1000);
-})();
